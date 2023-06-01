@@ -10,11 +10,10 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ${PROJECT_DIR}:/var/www/html/:rw
-      - ${NGINX_LOG_DIR}:/var/log/nginx/:rw
-      - ${NGINX_LIB_DIR}:/etc/nginx/lib/:ro
-      - ${NGINX_CONF_FILE}:/etc/nginx/nginx.conf:ro
-      - ${NGINX_VHOST_DIR}:/etc/nginx/conf.d/:ro
+      - ${PROJECT_DIR}:/www:rw
+      - ${NGINX_LOG_DIR}:/var/log/nginx:rw
+      - ${NGINX_LIB_DIR}:/etc/nginx/lib:ro
+      - ${NGINX_VHOST_DIR}:/etc/nginx/conf.d:ro
     restart: always
     networks:
       - default
@@ -23,12 +22,9 @@ services:
 
   mysql:
     image: mysql:${MYSQL_VERSION}
-    ports:
-      - "3306:3306"
     volumes:
-      - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
-      - ${MYSQL_DATA_DIR}:/var/lib/mysql/:rw
-      - ${MYSQL_LOG_DIR}:/var/log/mysql/:rw
+      - ${MYSQL_DATA_DIR}:/var/lib/mysql:rw
+      - ${MYSQL_LOG_DIR}:/var/log/mysql:rw
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
@@ -36,20 +32,17 @@ services:
     networks:
       - default
 
-  php74:
+  app:
     build:
-      context: ./build/php/
+      context: ./build/app/
       args:
-        PHP_VERSION: ${PHP74_VERSION}
+        PHP_VERSION: ${PHP_VERSION}
+        PHP_EXTENSIONS: ${PHP_EXTENSIONS}
         ALPINE_REPOSITORIES: ${ALPINE_REPOSITORIES}
-        PHP_EXTENSIONS: ${PHP74_EXTENSIONS}
-        MORE_EXTENSION_INSTALLER: php.sh
         TZ: "${TZ}"
     volumes:
-      - ${PROJECT_DIR}:/var/www/html:rw
-      - ${PHP74_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
-      - ${PHP74_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
-      - ${PHP74_LOG_DIR}:/var/log/php
+      - ${PROJECT_DIR}:/www:rw
+      - ${PHP_LOG_DIR}:/var/log/php
       - ${COMPOSER_CACHE_DIR}:/usr/local/composer
       - ${COMPOSER_CONFIG_FILE}:/usr/local/composer/config.json
     restart: always
@@ -57,8 +50,3 @@ services:
       - SYS_PTRACE
     networks:
       - default
-
-  nodejs:
-    image: node:alpine
-    volumes:
-      - ${PROJECT_DIR}:/var/www/html/:rw
