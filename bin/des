@@ -16,4 +16,4 @@ if [ `uname -s` == "Darwin" ]; then
 fi
 
 # exec command
-docker-compose -f docker-compose.yml ${mac_ext} $@
+docker compose -f docker-compose.yml ${mac_ext} $@
