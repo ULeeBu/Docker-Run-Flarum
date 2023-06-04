@@ -13,27 +13,24 @@ BASE_PATH=$(
 source "${BASE_PATH}/.env"
 
 # Get project directory
-projects_dir=$(
+PROJECT_BASE_DIR=$(
     cd "${BASE_PATH}/${PROJECT_DIR}"
     pwd
 )
 
 # Relative Path
-workdir=''
-if [[ $RUN_DIR == $projects_dir* ]]; then
-    workdir='/var/www/html/'
-    relative_path=${RUN_DIR//${projects_dir}/}
+if [[ $WORK_DIR == $PROJECT_BASE_DIR* ]]; then
+    relative_path="${WORK_DIR//${PROJECT_BASE_DIR}/}"
 fi
 
 # DEBUG Show
 if [ "$DEBUG" == "true" ]; then
     echo "WORK_DIR: ${WORK_DIR}"
-    echo "RUN_DIR: ${RUN_DIR}"
     echo "BASE_PATH: ${BASE_PATH}"
-    echo "projects_dir: ${projects_dir}"
+    echo "PROJECT_BASE_DIR: ${PROJECT_BASE_DIR}"
     echo "relative_path: ${relative_path}"
 fi
 
 docker_compose() {
-    docker compose -f "${BASE_PATH}/docker-compose.yml" $@
+    docker compose --file "${BASE_PATH}/docker-compose.yml" $@
 }

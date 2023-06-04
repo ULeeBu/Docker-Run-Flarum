@@ -4,4 +4,4 @@
 source .base_init
 
 # 执行命令
-docker_compose exec nginx nginx $@
+docker_compose run --rm --workdir="/www${relative_path}" app php $@
