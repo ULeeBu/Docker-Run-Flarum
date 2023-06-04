@@ -39,6 +39,7 @@ services:
         PHP_VERSION: ${PHP_VERSION}
         PHP_EXTENSIONS: ${PHP_EXTENSIONS}
         ALPINE_REPOSITORIES: ${ALPINE_REPOSITORIES}
+        NPM_INSTALL_GLOBAL_PACKS: ${NPM_INSTALL_GLOBAL_PACKS}
         TZ: "${TZ}"
     volumes:
       - ${PROJECT_DIR}:/www:rw

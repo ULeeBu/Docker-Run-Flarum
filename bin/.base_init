@@ -1,32 +1,39 @@
 #!/bin/bash
 
 # Command Directory
-run_dir=`pwd`
+WORK_DIR=$(pwd)
 
-# Switch to DES Directory
-base_dir=`dirname "$0"`
-base_dir=`dirname "${base_dir}"`
-cd "${base_dir}"
+# Switch to Directory
+BASE_PATH=$(
+    cd $(dirname "$0")
+    dirname `pwd`
+)
 
 # Introduce Configuration
-source ".env"
+source "${BASE_PATH}/.env"
 
 # Get project directory
-projects_dir=`cd "${PROJECT_DIR}"; pwd`
+projects_dir=$(
+    cd "${BASE_PATH}/${PROJECT_DIR}"
+    pwd
+)
 
 # Relative Path
 workdir=''
-if [[ $run_dir == $projects_dir* ]]; then
+if [[ $RUN_DIR == $projects_dir* ]]; then
     workdir='/var/www/html/'
-    relative_path=${run_dir//${projects_dir}/}
+    relative_path=${RUN_DIR//${projects_dir}/}
 fi
 
 # DEBUG Show
-if $DEBUG; then
-    echo "workdir: ${workdir}"
-    echo "run_dir: ${run_dir}";
-    echo "base_dir: ${base_dir}";
+if [ "$DEBUG" == "true" ]; then
+    echo "WORK_DIR: ${WORK_DIR}"
+    echo "RUN_DIR: ${RUN_DIR}"
+    echo "BASE_PATH: ${BASE_PATH}"
     echo "projects_dir: ${projects_dir}"
     echo "relative_path: ${relative_path}"
-    echo "is_project_dir: ${is_project_dir}"
 fi
+
+docker_compose() {
+    docker compose -f "${BASE_PATH}/docker-compose.yml" $@
+}

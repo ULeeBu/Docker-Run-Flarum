@@ -8,7 +8,7 @@ RUN if [ "${ALPINE_REPOSITORIES}" != "" ]; then \
 
 ARG TZ
 RUN apk update \
-    && apk --no-cache add tzdata nodejs \
+    && apk --no-cache add tzdata nodejs npm git \
     && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
     && echo "$TZ" > /etc/timezone
 
@@ -18,7 +18,9 @@ ENV COMPOSER_HOME="/usr/local/composer" PATH="/usr/local/composer/vendor/bin:${P
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
 
 ARG PHP_EXTENSIONS
+ARG NPM_INSTALL_GLOBAL_PACKS
 RUN export MC="-j$(nproc)" \
-    && install-php-extensions ${PHP_EXTENSIONS}
+    && install-php-extensions ${PHP_EXTENSIONS} \
+    && npm install -g ${NPM_INSTALL_GLOBAL_PACKS}
 
 WORKDIR /www

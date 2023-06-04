@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# use base_init
+source .base_init
+
+# exec command
+docker_compose $@
